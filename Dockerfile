@@ -20,22 +20,28 @@ RUN apt-get update \
      iproute2 \
      iptables \
      unzip \
+     libzmq3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /srslte
 
 # Pinned git commit used for this example
-ARG COMMIT=5d82f19988bc148d7f4cec7a0f29184375a64b40
+ARG COMMIT=master
 
 # Download and build
-RUN curl -LO https://github.com/jgiovatto/srsLTE/archive/${COMMIT}.zip \
+RUN curl -LO https://github.com/jwijenbergh/srsLTE/archive/${COMMIT}.zip \
  && unzip ${COMMIT}.zip \
  && rm ${COMMIT}.zip
 
 WORKDIR /srslte/srsLTE-build
 
+# build
 RUN cmake ../srsLTE-${COMMIT} \
- && make install
+ && make \
+ && make test
+
+# install
+RUN make install
 
 # Update dynamic linker
 RUN ldconfig
