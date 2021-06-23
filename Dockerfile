@@ -23,20 +23,20 @@ RUN apt-get update \
      libzmq3-dev \
  && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /srslte
+WORKDIR /srsran
 
 # Pinned git commit used for this example
 ARG COMMIT=master
 
 # Download and build
-RUN curl -LO https://github.com/jwijenbergh/srsLTE/archive/${COMMIT}.zip \
+RUN curl -LO https://github.com/jwijenbergh/srsRAN/archive/${COMMIT}.zip \
  && unzip ${COMMIT}.zip \
  && rm ${COMMIT}.zip
 
-WORKDIR /srslte/srsLTE-build
+WORKDIR /srsran/srsRAN-build
 
 # build
-RUN cmake ../srsLTE-${COMMIT} \
+RUN cmake ../srsRAN-${COMMIT} \
  && make \
  && make test
 
@@ -46,10 +46,10 @@ RUN make install
 # Update dynamic linker
 RUN ldconfig
 
-WORKDIR /srslte
+WORKDIR /srsran
 
 # Copy all .example files and remove that suffix
-RUN cp srsLTE-${COMMIT}/*/*.example ./ \
+RUN cp srsRAN-${COMMIT}/*/*.example ./ \
  && bash -c 'for file in *.example; do mv "$file" "${file%.example}"; done'
 
 # Run commands with line buffered standard output
