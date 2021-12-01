@@ -7,6 +7,7 @@ FROM ubuntu:bionic as base
 RUN apt-get update \
  && DEBIAN_FRONTEND=noninteractive apt-get install -y \
      cmake \
+     git \
      libuhd-dev \
      uhd-host \
      libboost-program-options-dev \
@@ -19,19 +20,20 @@ RUN apt-get update \
      iputils-ping \
      iproute2 \
      iptables \
-     unzip \
      libzmq3-dev \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /srsran
 
 # Pinned git commit used for this example
-ARG COMMIT=master
+ARG COMMIT=5275f33360f1b3f1ee8d1c4d9ae951ac7c4ecd4e
 
-# Download and build
-RUN curl -LO https://github.com/jwijenbergh/srsRAN/archive/${COMMIT}.zip \
- && unzip ${COMMIT}.zip \
- && rm ${COMMIT}.zip
+# Clone and checkout commit
+RUN git clone https://github.com/srsran/srsRAN srsRAN-${COMMIT}
+
+WORKDIR /srsran/srsRAN-${COMMIT}
+
+RUN git checkout ${COMMIT}
 
 WORKDIR /srsran/srsRAN-build
 
@@ -49,6 +51,7 @@ RUN ldconfig
 WORKDIR /srsran
 
 # Copy all .example files and remove that suffix
+RUN ls srsRAN-${COMMIT}/*/*.example
 RUN cp srsRAN-${COMMIT}/*/*.example ./ \
  && bash -c 'for file in *.example; do mv "$file" "${file%.example}"; done'
 

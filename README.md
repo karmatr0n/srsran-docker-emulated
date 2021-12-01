@@ -1,6 +1,6 @@
-# srslte-docker-emulated
+# srsran-docker-emulated
 
-This is a minimal example of an end-to-end [srsLTE] system running with Docker
+This is a minimal example of an end-to-end [srsRAN] LTE system running with Docker
 and shared memory. Core network, base station and user device all run in
 separate containers. The air interface is emulated via radio samples in shared
 memory.
