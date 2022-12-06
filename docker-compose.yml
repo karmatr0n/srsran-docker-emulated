@@ -22,11 +22,11 @@ services:
     build: .
     command:
       - srsenb
-      - enb.conf
+      - enb-sib12.conf
       - --enb.mme_addr=10.80.95.10
       - --enb.gtp_bind_addr=10.80.95.11
       - --enb.s1c_bind_addr=10.80.95.11
-      - --enb_files.sib_config=sib.conf
+      - --enb_files.sib_config=sib12.conf
       - --rf.device_name=zmq
       - --rf.device_args=fail_on_disconnect=true,tx_port=tcp://10.80.97.11:2000,rx_port=tcp://10.80.97.10:2001,id=enb,base_srate=23.04e6"
     networks:
@@ -36,8 +36,12 @@ services:
         ipv4_address: 10.80.97.11
     cap_add:
       - SYS_NICE
+      - ALL
     depends_on:
         - srsepc
+    volumes:
+      - "./sib12-conf:/sib12-conf:z"
+
   srsue:
     container_name: virtual-srsue
     build: .
@@ -48,6 +52,7 @@ services:
       - --rf.device_args=tx_port=tcp://10.80.97.10:2001,rx_port=tcp://10.80.97.11:2000,id=ue,base_srate=23.04e6"
     cap_add:
       - NET_ADMIN
+      - ALL
       - SYS_NICE
     devices:
         - /dev/net/tun

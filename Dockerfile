@@ -21,9 +21,17 @@ RUN apt-get update \
      iproute2 \
      iptables \
      libzmq3-dev \
+     diffutils \
+     vim \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /srsran
+
+COPY sib12-conf/data.json ./
+COPY sib12-conf/drb-sib2.conf ./
+COPY sib12-conf/enb-sib12.conf ./
+COPY sib12-conf/rr-sib12.conf ./
+COPY sib12-conf/sib12.conf ./
 
 # Pinned git commit used for this example
 ARG COMMIT=5275f33360f1b3f1ee8d1c4d9ae951ac7c4ecd4e
@@ -39,8 +47,7 @@ WORKDIR /srsran/srsRAN-build
 
 # build
 RUN cmake ../srsRAN-${COMMIT} \
- && make \
- && make test
+ && make 
 
 # install
 RUN make install
